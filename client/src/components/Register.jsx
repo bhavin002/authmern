@@ -16,9 +16,9 @@ const Register = () => {
     const inpEvent = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        setInpval((prev) => {
+        setInpval(() => {
             return {
-                ...prev,
+                ...inpval,
                 [name]: value
             }
         })
@@ -56,7 +56,10 @@ const Register = () => {
                 })
             });
             const res = await data.json();
-            console.log(res);
+            if(res.status === 201 ){
+                alert("User Registration Done")
+                setInpval({...inpval,fname:'',email:'',password:'',cpassword:''})
+            }
           }
     }
 

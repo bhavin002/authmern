@@ -14,14 +14,14 @@ const Login = () => {
     const inpEvent = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        setInpval((prev) => {
+        setInpval(() => {
             return {
-                ...prev,
+                ...inpval,
                 [name]: value
             }
         })
     }
-    const logIn = (e) =>{
+    const logIn = async (e) =>{
         e.preventDefault();
         const {email,password} = inpval;
         const regEx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -37,7 +37,20 @@ const Login = () => {
           })){
             alert("Please Enter The Strong Password like this Abc@1234");
         }else{
-            alert("User Login SuccessFully Done")
+            const data = await fetch('/login',{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    email,password
+                })
+            });
+            const res = data.json()
+            if(res.status === 201){
+                localStorage.setItem("userAuthToken",res.result.token)
+                setInpval({...inpval,email:'',password:''})
+            }
         }
     }
     return (

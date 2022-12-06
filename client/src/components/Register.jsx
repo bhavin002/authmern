@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import validation from './Validation';
 import './Mix.css';
+import validator from 'validator'
 
 const Register = () => {
     const [passShow, setPassShow] = useState(false);
     const [cpassShow, setcPassShow] = useState(false);
-    const [errors, setErrors] = useState({})
     const initaialValue = {
         fname: '',
         email: '',
@@ -24,9 +23,41 @@ const Register = () => {
             }
         })
     }
-    const AddUser = (e) => {
+    const singUp = async (e) => {
+        const regEx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
         e.preventDefault();
-        setErrors(validation(inpval));
+        const {fname,email,password,cpassword} = inpval
+        if(fname === ""){
+            alert("Please Enter Your Name");
+        }else if(email === ""){
+            alert("Please Enter Your Email")
+        }else if(!regEx.test(email)){
+            alert("Please Enter The Valid Email")
+        }else if(password === ""){
+            alert("Please Enter The Password")
+        }else if(!validator.isStrongPassword(password, {
+            minLength: 6, minLowercase: 1,
+            minUppercase: 1, minNumbers: 1, minSymbols: 1
+          })){
+            alert("Please Enter The Strong Password like this Abc@1234");
+          }else if(cpassword === ""){
+            alert("Please Enter The Confirm Password")
+          }else if(cpassword !== password){
+            alert("Password And Confirm Password does not matched")
+          }else{
+            
+            const data = await fetch('/register',{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    fname,email,password,cpassword
+                })
+            });
+            const res = await data.json();
+            console.log(res);
+          }
     }
 
     return (
@@ -41,19 +72,16 @@ const Register = () => {
                         <div className="form_input">
                             <label htmlFor="fname">Name</label>
                             <input type="text" name="fname" id="fname" value={inpval.fname} onChange={inpEvent} placeholder='Enter Your Name ' />
-                            {errors.fname && <p style={{ color: 'red', fontSize: '13px' }}>{errors.fname}</p>}
                         </div>
                         <div className="form_input">
                             <label htmlFor="email">Email</label>
                             <input type="email" name="email" id="email" value={inpval.email} onChange={inpEvent} placeholder='Enter Your Email Address' />
-                            {errors.email && <p style={{ color: 'red', fontSize: '13px' }}>{errors.email}</p>}
 
                         </div>
                         <div className="form_input">
                             <label htmlFor="password">Password</label>
                             <div className="two">
-                                <input type={!passShow ? "password" : "text"} value={inpval.password} onChange={inpEvent} name="password" id="password" placeholder='Enter Your Password Address' />
-                                {errors.password && <p style={{ color: 'red', fontSize: '13px' }}>{errors.password}</p>}
+                                <input type={!passShow ? "password" : "text"} value={inpval.password} onChange={inpEvent} name="password" id="password" placeholder='Enter Your Password' />
                                 <div className="showpass" onClick={() => setPassShow(!passShow)}>
                                     {!passShow ? "Show" : "Hide"}
                                 </div>
@@ -63,14 +91,12 @@ const Register = () => {
                             <label htmlFor="cpassword">Confirm Password</label>
                             <div className="two">
                                 <input type={!cpassShow ? "password" : "text"} value={inpval.cpassword} onChange={inpEvent} name="cpassword" id="cpassword" placeholder='Confirm Password' />
-                                {errors.cpassword && <p style={{ color: 'red', fontSize: '13px' }}>{errors.cpassword}</p>}
-
                                 <div className="showpass" onClick={() => setcPassShow(!cpassShow)}>
                                     {!cpassShow ? "Show" : "Hide"}
                                 </div>
                             </div>
                         </div>
-                        <button className='btn' onClick={AddUser}>Sing Up</button>
+                        <button className='btn' onClick={singUp}>Sing Up</button>
                         <p>Already have an Account? <NavLink to={"/"}>Log In</NavLink> </p>
                     </form>
                 </div>

@@ -52,6 +52,8 @@ const Login = () => {
                 localStorage.setItem("userAuthToken",res.result.token)
                 navigate("/dash")
                 setInpval({...inpval,email:" ",password:" "});
+            }else{
+                alert("Invalid Details");
             }
         }
     }

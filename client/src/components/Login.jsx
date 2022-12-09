@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import './Mix.css'
 import validator from 'validator'
 
@@ -11,6 +11,7 @@ const Login = () => {
         password: '',
     }
     const [inpval, setInpval] = useState(initaialValue);
+    const navigate = useNavigate();
     const inpEvent = (e) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -46,10 +47,11 @@ const Login = () => {
                     email,password
                 })
             });
-            const res = data.json()
+            const res = await data.json()
             if(res.status === 201){
                 localStorage.setItem("userAuthToken",res.result.token)
-                setInpval({...inpval,email:'',password:''})
+                navigate("/dash")
+                setInpval({...inpval,email:" ",password:" "});
             }
         }
     }
@@ -64,12 +66,12 @@ const Login = () => {
                     <form autoComplete='off'>
                         <div className="form_input">
                             <label htmlFor="email">Email</label>
-                            <input type="email" name="email" id="email" placeholder='Enter Your Email Address' onChange={inpEvent} />
+                            <input type="email" name="email" id="email" value={inpval.email} placeholder='Enter Your Email Address' onChange={inpEvent} />
                         </div>
                         <div className="form_input">
                             <label htmlFor="password">Password</label>
                             <div className="two">
-                                <input type={!passShow ? "password" : "text"} name="password" id="password" onChange={inpEvent} placeholder='Enter Your Password Address' />
+                                <input type={!passShow ? "password" : "text"} value={inpval.password} name="password" id="password" onChange={inpEvent} placeholder='Enter Your Password Address' />
                                 <div className="showpass" onClick={()=>setPassShow(!passShow)}>
                                     {!passShow ? "Show" : "Hide"}
                                 </div>

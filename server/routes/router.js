@@ -2,7 +2,7 @@ import express from 'express'
 import userDB from '../models/userSchema.js';
 const router = express.Router();
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import userAuthMiddle from '../middleware/middleware.js';
 
 router.post("/register", async (req, res) => {
     const { fname, email, password, cpassword } = req.body
@@ -19,6 +19,8 @@ router.post("/register", async (req, res) => {
         res.status(201).json({ status: 201, saveData });
     }
 })
+
+
 router.post("/login", async (req, res) => {
     const { email, password } = req.body
     if (!email || !password) {
@@ -46,7 +48,16 @@ router.post("/login", async (req, res) => {
             }
         }
     } catch (error) {
-        
+        res.status(422).json(error)
+    }
+})
+
+router.get("/validuser", userAuthMiddle,async(req,res) =>{
+    try {
+        const ValiduserOne = await userDB.findOne({_id:req.userId});
+        res.status(201).json({status:201,ValiduserOne})
+    } catch (error) {
+        res.status(401).json({status:401,error})
     }
 })
 

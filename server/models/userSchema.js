@@ -29,7 +29,6 @@ const userSchema = mongoose.Schema({
         }
     ]
 });
-const secretKey = "hellodevelopersiambhavinvasavada"
 userSchema.pre("save",async function(next){
     if(this.isModified("password")){
         this.password = await bcrypt.hash(this.password,12)
@@ -40,7 +39,7 @@ userSchema.pre("save",async function(next){
 
 userSchema.methods.genrateAuthtoken = async function (){
     try {
-        let jwtToken = jwt.sign({_id:this._id},secretKey,{
+        let jwtToken = jwt.sign({_id:this._id},process.env.SECRET_KEY,{
             expiresIn:'1d'
         });
         this.tokens = this.tokens.concat({token:jwtToken})

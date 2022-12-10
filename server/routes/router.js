@@ -6,11 +6,15 @@ import userAuthMiddle from '../middleware/middleware.js';
 
 router.post("/register", async (req, res) => {
     const { fname, email, password, cpassword } = req.body
+    const unique = await userDB.findOne({email:email})
     if (!fname || !email || !password || !cpassword) {
         res.status(422).json({ 'message': 'Please Fill All The Blank Field...' })
     } else if (cpassword !== password) {
         res.status(422).json({ 'message': 'confirm password and password does not matched...' })
-    } else {
+    } else if(unique){
+        res.status(403).json({status:403,'message':'Please Enter Unique Email'})
+    }
+    else {
         const finalUser = new userDB({
             fname, email, password, cpassword
         })
@@ -28,7 +32,9 @@ router.post("/login", async (req, res) => {
     }
     try {
         const userValid =   await userDB.findOne({email:email})
-        if(userValid){
+        if(!userValid){
+            res.status(422).json({ 'message': 'Invalid Details' })
+        }else{
             const isMatch = await bcrypt.compare(password,userValid.password)
             if(!isMatch){
                 res.status(422).json({ 'message': 'Invalid Details' })
@@ -56,6 +62,21 @@ router.get("/validuser", userAuthMiddle,async(req,res) =>{
     try {
         const ValiduserOne = await userDB.findOne({_id:req.userId});
         res.status(201).json({status:201,ValiduserOne})
+    } catch (error) {
+        res.status(401).json({status:401,error})
+    }
+})
+
+router.get("/logout",userAuthMiddle,async(req,res) =>{
+    try {
+        req.rootUser.tokens = req.rootUser.tokens.filter((curElem)=>{
+            return curElem.token !== req.token
+        })
+
+        res.clearCookie("userAuthCookie",{path:"/"});
+        req.rootUser.save();
+        res.status(201).json({status:201})
+
     } catch (error) {
         res.status(401).json({status:401,error})
     }

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useNavigate } from 'react-router-dom';
 import './Mix.css';
 import validator from 'validator'
+import {ToastContainer,toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Register = () => {
     const [passShow, setPassShow] = useState(false);
     const [cpassShow, setcPassShow] = useState(false);
+    const navigate = useNavigate();
     const initaialValue = {
         fname: '',
         email: '',
@@ -28,22 +32,22 @@ const Register = () => {
         e.preventDefault();
         const {fname,email,password,cpassword} = inpval
         if(fname === ""){
-            alert("Please Enter Your Name");
+           toast.error("Please Enter Your Name");
         }else if(email === ""){
-            alert("Please Enter Your Email")
+            toast.error("Please Enter Your Email")
         }else if(!regEx.test(email)){
-            alert("Please Enter The Valid Email")
+            toast.error("Please Enter The Valid Email")
         }else if(password === ""){
-            alert("Please Enter The Password")
+            toast.error("Please Enter The Password")
         }else if(!validator.isStrongPassword(password, {
             minLength: 6, minLowercase: 1,
             minUppercase: 1, minNumbers: 1, minSymbols: 1
           })){
-            alert("Please Enter The Strong Password like this Abc@1234");
+            toast.error("Please Enter The Strong Password like this Abc@1234");
           }else if(cpassword === ""){
-            alert("Please Enter The Confirm Password")
+            toast.error("Please Enter The Confirm Password")
           }else if(cpassword !== password){
-            alert("Password And Confirm Password does not matched")
+            toast.error("Password And Confirm Password does not matched")
           }else{
             
             const data = await fetch('/register',{
@@ -56,10 +60,16 @@ const Register = () => {
                 })
             });
             const res = await data.json();
-            if(res.status === 201 ){
-                alert("User Registration Done")
+            if(res.status === 403){
+                toast.error("Email Is Allready Exits");
+            }else if(res.status === 201 ){
+                toast.success("User Registration Done");
+                setTimeout(() => {
+                    navigate("/");
+                }, 5500);
                 setInpval({...inpval,fname:'',email:'',password:'',cpassword:''})
             }
+            
           }
     }
 
@@ -102,6 +112,7 @@ const Register = () => {
                         <button className='btn' onClick={singUp}>Sing Up</button>
                         <p>Already have an Account? <NavLink to={"/"}>Log In</NavLink> </p>
                     </form>
+                    <ToastContainer/>
                 </div>
             </section>
         </>

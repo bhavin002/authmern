@@ -2,7 +2,10 @@ import React from 'react'
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import './Mix.css'
-import validator from 'validator'
+import validator from 'validator';
+import {ToastContainer,toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
     const [passShow,setPassShow] = useState(false);
@@ -27,16 +30,16 @@ const Login = () => {
         const {email,password} = inpval;
         const regEx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
         if(email === ""){
-            alert("Please Enter Your Email")
+            toast.error("Please Enter Your Email")
         }else if(!regEx.test(email)){
-            alert("Please Enter The Valid Email")
+            toast.error("Please Enter The Valid Email")
         }else if(password === ""){
-            alert("Please Enter The Password")
+            toast.error("Please Enter The Password")
         }else if(!validator.isStrongPassword(password, {
             minLength: 6, minLowercase: 1,
             minUppercase: 1, minNumbers: 1, minSymbols: 1
           })){
-            alert("Please Enter The Strong Password like this Abc@1234");
+            toast.error("Please Enter The Strong Password like this Abc@1234");
         }else{
             const data = await fetch('/login',{
                 method:'POST',
@@ -53,7 +56,7 @@ const Login = () => {
                 navigate("/dash")
                 setInpval({...inpval,email:" ",password:" "});
             }else{
-                alert("Invalid Details");
+                toast.error("Invalid Email Or PassWord");
             }
         }
     }
@@ -83,6 +86,7 @@ const Login = () => {
                         <p>Don't have an Account? <NavLink to={"/register"}>Sing Up</NavLink>
                          </p>
                     </form>
+                    <ToastContainer/>
                 </div>
             </section>
         </>

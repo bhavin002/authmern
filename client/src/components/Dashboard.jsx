@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from './contextProvider/Context';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const [userData, setUserData] = useContext(LoginContext);
-
+    const [userData, setUserData] = useState();
+    const [firstLetter,setFirstLetter] = useContext(LoginContext);
     const DashboardValid = async () => {
         let token = localStorage.getItem('userAuthToken')
         const data = await fetch("/validuser", {
@@ -21,6 +21,7 @@ const Dashboard = () => {
         } else {
             const { fname } = res.ValiduserOne;
             setUserData(fname);
+            setFirstLetter(fname[0].toUpperCase());
             navigate("/dash")
         }
 
@@ -31,8 +32,8 @@ const Dashboard = () => {
     return (
         <>
             <div style={{ 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center' }}>
-                <img src="./man.png" alt="NoImage" style={{ 'marginTop': '25px', 'borderRadius': '10px' }} />
-                <h1 style={{ 'marginTop': '25px' }}>Hello,{userData}</h1>
+                <img src="./man.jpg" alt="NoImage" style={{ 'marginTop': '50px', 'borderRadius': '10px' }} />
+                <h1 style={{ 'marginTop': '25px' }}>Hello,{userData ? userData : ""}</h1>
             </div>
         </>
     )

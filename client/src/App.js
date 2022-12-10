@@ -5,13 +5,12 @@ import {Routes,Route} from 'react-router-dom';
 import {BrowserRouter} from 'react-router-dom';
 import Dashboard from './components/Dashboard'
 import Error from "./components/Error";
-
-
 function App() {
+
   return (
     <>
-      <Header/>
       <BrowserRouter>
+      <Header/>
         <Routes>
         <Route path="/" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>

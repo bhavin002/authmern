@@ -2,7 +2,7 @@ import React,{createContext,useState} from 'react'
 
 export const LoginContext = createContext();
 
-const Content = ({children}) => {
+const Context = ({children}) => {
     const [loginData,setLoginData] = useState();
   return (
     <LoginContext.Provider value={[loginData,setLoginData]}>
@@ -11,4 +11,4 @@ const Content = ({children}) => {
   )
 }
 
-export default Content;
+export default Context;

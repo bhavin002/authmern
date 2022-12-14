@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import { LoginContext } from './contextProvider/Context';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import {ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const Header = () => {
@@ -51,7 +51,7 @@ const Header = () => {
     <>
       <header>
         <nav>
-          <h1>Authentication</h1>
+          <Link style={{'textDecoration':'none'}} to={"/"}><h1>Authentication</h1></Link>
           <div className="avtar">
             {
               firstLetter ? <Avatar onClick={handleClick} style={{ 'background': 'black' }}>{firstLetter}</Avatar> : <PersonIcon onClick={handleClick} style={{ fontSize: 'xxx-large' }} />

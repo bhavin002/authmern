@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { NavLink,useNavigate } from 'react-router-dom';
 import './Mix.css';
 import validator from 'validator'
@@ -7,6 +7,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const Register = () => {
+    useEffect(()=>{
+        const item = localStorage.getItem('userAuthToken');
+        if(item){
+            navigate("/dash")
+        }
+    },[])
     const [passShow, setPassShow] = useState(false);
     const [cpassShow, setcPassShow] = useState(false);
     const navigate = useNavigate();

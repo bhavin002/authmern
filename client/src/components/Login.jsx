@@ -1,13 +1,19 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import './Mix.css'
 import validator from 'validator';
 import {ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const Login = () => {
+    useEffect(()=>{
+        const item = localStorage.getItem('userAuthToken');
+        if(item){
+            navigate("/dash")
+        }
+    },[])
+    
     const [passShow,setPassShow] = useState(false);
     const initaialValue = {
         email: '',
@@ -83,8 +89,8 @@ const Login = () => {
                             </div>
                         </div>
                         <button className='btn' onClick={logIn}>Login</button>
-                        <p>Don't have an Account? <NavLink to={"/register"}>Sing Up</NavLink>
-                         </p>
+                        <p>Don't have an Account? <NavLink to={"/register"}>Sing Up</NavLink></p>
+                        <p style={{'color':'black','fontWeight':'bolder'}}>Forgot Password <NavLink to={"/reset"}>Click Here</NavLink></p>
                     </form>
                     <ToastContainer/>
                 </div>

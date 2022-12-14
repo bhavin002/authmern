@@ -3,6 +3,17 @@ import userDB from '../models/userSchema.js';
 const router = express.Router();
 import bcrypt from 'bcryptjs'
 import userAuthMiddle from '../middleware/middleware.js';
+import nodemailer from 'nodemailer'
+
+// email config
+
+const transpoter = nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user:process.env.EMAIL,
+        pass:process.env.EMAIL_PASSWORD
+    }
+})
 
 router.post("/register", async (req, res) => {
     const { fname, email, password, cpassword } = req.body
@@ -79,6 +90,19 @@ router.get("/logout",userAuthMiddle,async(req,res) =>{
 
     } catch (error) {
         res.status(401).json({status:401,error})
+    }
+})
+
+router.post('/sendlink',async (req,res) =>{
+    const {email} = req.body;
+    if(!email){
+        res.status(401).json({status:401,message:'Please Enter The Email'})
+    }
+    try {
+        const userfind = await userDB.findOne({email:email});
+        console.log("userFind",userfind);
+    } catch (error) {
+        
     }
 })
 

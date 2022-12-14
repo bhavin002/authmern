@@ -2,7 +2,9 @@ import React from 'react'
 
 const Error = () => {
   return (
-    <div>Error</div>
+    <>
+      <img src="error.jpg" alt="Error_Page" />
+    </>
   )
 }
 

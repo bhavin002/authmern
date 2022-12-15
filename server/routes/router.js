@@ -139,7 +139,6 @@ router.get("/forgotpass/:id/:token",async (req,res)=>{
         const varifyToken = jwt.verify(token,process.env.SECRET_KEY);
         if(uservali && varifyToken._id){
             res.status(201).json({status:201,uservali})
-            console.log(uservali);
         }else{
             res.status(401).json({status:401,message:'User Not Exist'})
         }

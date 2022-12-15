@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import validator from 'validator';
@@ -8,11 +9,32 @@ const Forgotpassword = () => {
     const [newpass, setNewPass] = useState('');
     const [passShow, setPassShow] = useState(false);
     const [msg,setmsg] = useState('');
+    const {id,token} = useParams();
+
+    const userValid = async () =>{
+        const res = await fetch(`/forgot/${id}/${token}`,{
+            method:"GET",
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+
+        const data = await res.json();
+        if(data.status === 201){
+            console.log("User Validate");
+        }else{
+            navigate("*");
+        }
+    }
+    useEffect(()=>{
+        userValid();
+    },[])
+
     const navigate = useNavigate();
     const inpEvent = (event) => {
         setNewPass(event.target.value);
     }
-    const ForgotPass = (e) => {
+    const ForgotPass = async (e) => {
         e.preventDefault();
         if (!newpass) {
             toast.error("Please Enter Your New Password")
@@ -22,12 +44,27 @@ const Forgotpassword = () => {
         })) {
             toast.error("Please Enter The Strong Password like this Abc@1234")
         }else{
-            console.log(newpass);
+            const res = await fetch(`/${id}/${token}`,{
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({newpass})
+            })
+
+            const data = await res.json();
+        if(data.status === 201){
             setNewPass('');
             setmsg('Your Password Is SuccessFully Updated');
             setTimeout(() => {
                 navigate("/");
             }, 3000);
+        }else{
+            toast.error("Token Expired Generate New Link")
+            setTimeout(() => {
+                navigate("/reset");
+            }, 3000);
+        }
         }
 
     }

@@ -132,4 +132,39 @@ router.post('/sendlink',async (req,res) =>{
     }
 })
 
+router.get("/forgot/:id/:token",async (req,res)=>{
+    const {id,token} = req.params;
+    try {
+        console.log(varifyToken);
+        const uservali = await userDB.find({_id:id,verifytoken:token});
+        const varifyToken = jwt.verify(token,process.env.SECRET_KEY);
+        if(uservali && varifyToken._id){
+            res.status(201).json({status:201,uservali})
+        }else{
+            res.status(401).json({status:401,message:'User Not Exist'})
+        }
+    } catch (error) {
+        res.status(401).json({status:401,error})
+    }
+})
+
+router.post("/:id/:token",async(req,res)=>{
+    const {id,token} = req.params;
+    const {newpass} = req.body;
+    try {
+        const uservali = await userDB.find({_id:id,verifytoken:token});
+        const varifyToken = jwt.verify(token,process.env.SECRET_KEY);
+        if(uservali && varifyToken._id){
+            const newpassword = await bcrypt.hash(newpass,12);
+            const setnewpass = await userDB.findByIdAndUpdate({_id:id},{password:newpassword});
+            setnewpass.save();
+            res.status(201).json({status:201,setnewpass})
+        }else{
+            res.status(401).json({status:401,message:'User Not Exist'})
+        }
+    } catch (error) {
+        res.status(401).json({status:401,error})
+    } 
+})
+
 export default router;

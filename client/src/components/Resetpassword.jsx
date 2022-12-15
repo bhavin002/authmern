@@ -8,7 +8,7 @@ const Resetpassword = () => {
     const inpEvent = (event) =>{
         setEmail(event.target.value)
     }
-    const SendMail = (e) =>{
+    const SendMail = async (e) =>{
         e.preventDefault();
         const regEx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
         if(!email){
@@ -16,9 +16,20 @@ const Resetpassword = () => {
         }else if(!regEx.test(email)){
             toast.error("Please Enter The Valid Email");
         }else{
-            console.log(email);
-            setEmail('');
-            setmsg('Password Reset Link Sent SuccessFully In Your Email')
+            const res = await fetch('/sendlink',{
+                method:'POST',
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({email})
+            });
+            const data = await res.json();
+            if(data.status === 201){
+                setEmail('');
+                setmsg('Password Reset Link Sent SuccessFully In Your Email');
+            }else{
+                toast.error("Invalid Email");
+            }
         }
     }
   return (

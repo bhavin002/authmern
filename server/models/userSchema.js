@@ -26,7 +26,10 @@ const userSchema = mongoose.Schema({
                 required:true
             }
         }
-    ]
+    ],
+    verifytoken:{
+        type:String
+    }
 });
 userSchema.pre("save",async function(next){
     if(this.isModified("password")){

@@ -3,17 +3,18 @@ import userDB from '../models/userSchema.js';
 const router = express.Router();
 import bcrypt from 'bcryptjs'
 import userAuthMiddle from '../middleware/middleware.js';
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';  
 
 // email config
 
-const transpoter = nodemailer.createTransport({
-    service:"gmail",
-    auth:{
-        user:process.env.EMAIL,
-        pass:process.env.EMAIL_PASSWORD
+var transport = nodemailer.createTransport({
+    service:'gmail',
+    auth: {
+      user: "bhavinvasavada1@gmail.com",
+      pass: "jgpalsytjgodvhwc"
     }
-})
+  });
 
 router.post("/register", async (req, res) => {
     const { fname, email, password, cpassword } = req.body
@@ -96,13 +97,38 @@ router.get("/logout",userAuthMiddle,async(req,res) =>{
 router.post('/sendlink',async (req,res) =>{
     const {email} = req.body;
     if(!email){
-        res.status(401).json({status:401,message:'Please Enter The Email'})
+        res.status(401).json({status:401,message:'Please Enter The Email'});
     }
     try {
         const userfind = await userDB.findOne({email:email});
-        console.log("userFind",userfind);
+        if(!userfind){
+            res.status(404).json({status:404,message:'Email Does Not Exists.'})
+        }else{
+            const token = jwt.sign({_id:userfind._id},process.env.SECRET_KEY,{
+                expiresIn:'120s'
+            })
+            const setusertoken = await userDB.findByIdAndUpdate({_id:userfind._id},{verifytoken:token},{new:true})
+            if(setusertoken){
+                const mailOptions = {
+                    from:"bhavinvasavada1@gmail.com",
+                    to:email,
+                    subject:"Sending Email For Password Reset",
+                    text:`This Link Valid For 2 MINUTES http://localhost:3000/forgot/${userfind.id}/${setusertoken.verifytoken}`
+                }
+                transport.sendMail(mailOptions,(error,info)=>{
+                    if(error){
+                        console.log("error",error);
+                        res.status(401).json({status:401,message:"Email Not Send"})
+                    }else{
+                        console.log("Email Sent",info.response);
+                        res.status(201).json({status:201,message:"Email Sent SuccessFully"});
+
+                    }
+                })
+            }
+        }
     } catch (error) {
-        
+        res.status(401).json({status:401,message:"Invalid Email"});
     }
 })
 

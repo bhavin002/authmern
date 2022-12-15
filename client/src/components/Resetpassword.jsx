@@ -27,8 +27,8 @@ const Resetpassword = () => {
             if(data.status === 201){
                 setEmail('');
                 setmsg('Password Reset Link Sent SuccessFully In Your Email');
-            }else{
-                toast.error("Invalid Email");
+            }else if(data.status === 404){
+                toast.error("Email Does Not Exist.");
             }
         }
     }

@@ -12,7 +12,7 @@ const Forgotpassword = () => {
     const {id,token} = useParams();
 
     const userValid = async () =>{
-        const res = await fetch(`/forgot/${id}/${token}`,{
+        const res = await fetch(`/forgotpass/${id}/${token}`,{
             method:"GET",
             headers:{
                 'Content-Type':'application/json'
@@ -23,7 +23,7 @@ const Forgotpassword = () => {
         if(data.status === 201){
             console.log("User Validate");
         }else{
-            navigate("*");
+            console.log("User not validate");
         }
     }
     useEffect(()=>{

@@ -132,14 +132,14 @@ router.post('/sendlink',async (req,res) =>{
     }
 })
 
-router.get("/forgot/:id/:token",async (req,res)=>{
+router.get("/forgotpass/:id/:token",async (req,res)=>{
     const {id,token} = req.params;
     try {
-        console.log(varifyToken);
         const uservali = await userDB.find({_id:id,verifytoken:token});
         const varifyToken = jwt.verify(token,process.env.SECRET_KEY);
         if(uservali && varifyToken._id){
             res.status(201).json({status:201,uservali})
+            console.log(uservali);
         }else{
             res.status(401).json({status:401,message:'User Not Exist'})
         }

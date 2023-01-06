@@ -6,8 +6,6 @@ import userAuthMiddle from '../middleware/middleware.js';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';  
 
-// email config
-
 var transport = nodemailer.createTransport({
     service:'gmail',
     auth: {
